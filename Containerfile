@@ -2,7 +2,7 @@
 # and run with `toolbox create --image NAME`. This allows podman on the
 # host to be used from within the toolbox via the flatpak-spawn command.
 
-FROM registry.fedoraproject.org/fedora-toolbox:41
+FROM registry.fedoraproject.org/fedora-toolbox:40
 LABEL author "Chris Collins <collins.christopher@gmail.com>"
 
 ARG GIT_HASH
