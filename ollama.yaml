@@ -1,0 +1,60 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    io.podman.annotations.userns/ollama: keep-id
+  labels:
+    app: ollama
+  name: ollama
+spec:
+  containers:
+  - command:
+    - /bin/ollama
+    - serve
+    env:
+      - name: OLLAMA_HOST
+        value: 0.0.0.0:11434
+      - name: HOME
+        value: /home/ollama
+    image: quay.io/chcollin/toolbox-ollama:latest
+    name: serve
+    securityContext:
+      runAsNonRoot: true
+      privileged: false
+      seLinuxOptions:
+        type: spc_t
+    volumeMounts:
+    - mountPath: "/home/ollama"
+      name: ollama
+  - command:
+    - "/bin/bash"
+    - "-c"
+    - "trap TERM INT; sleep infinity & wait"
+    env:
+      - name: OLLAMA_HOST
+        value: 0.0.0.0:11434
+    image: quay.io/chcollin/toolbox-ollama:latest
+    name: cli
+    securityContext:
+      runAsNonRoot: true
+      privileged: false
+      seLinuxOptions:
+        type: spc_t
+  volumes:
+  - name: ollama
+    persistentVolumeClaim:
+      claimName: ollama
