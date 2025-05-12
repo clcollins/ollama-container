@@ -18,11 +18,11 @@ ALLOW_DIRTY_CHECKOUT?=false
 default: all
 
 .PHONY: all
-all: isclean build tag push
+all: isclean build tag
 
 .PHONY: isclean
 isclean:
-	@(test "$(ALLOW_DIRTY_CHECKOUT)" != "false" || test 0 -eq $$(git status --porcelain | wc -l)) || (echo "Local git checkout is not clean, commit changes and try again." >&2 && git --no-pager diff && exit 1)
+	(test "$(ALLOW_DIRTY_CHECKOUT)" == "true" || test 0 -eq $$(git status --porcelain | wc -l)) || (echo "Local git checkout is not clean, commit changes and try again." >&2 && git --no-pager diff && exit 1)
 
 .PHONY: build
 build: 
@@ -42,3 +42,11 @@ push:
 cleanup-bootstrap:
 	${CONTAINER_SUBSYS} stop bootstrap
 	${CONTAINER_SUBSYS} rm bootstrap
+
+.PHONY: toolbox
+toolbox:
+	toolbox create --image ${TAG} ${IMAGE_NAME}
+
+.PHONY: cleanup-toolbox
+cleanup-toolbox:
+	toolbox rm --force ${IMAGE_NAME}
