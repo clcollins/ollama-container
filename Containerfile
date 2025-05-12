@@ -8,14 +8,14 @@ LABEL author "Chris Collins <collins.christopher@gmail.com>"
 LABEL com.github.containers.toolbox="true"
 
 ARG GIT_HASH
-LABEL toolbox-ollama-version=${GIT_HASH}
+LABEL toolbox-ollama-version ${GIT_HASH}
 
 ENV OLLAMA_PORT 11434
 
 RUN curl -L https://ollama.com/download/ollama-linux-amd64.tgz -o ollama-linux-amd64.tgz
 RUN tar -C /usr -xzf ollama-linux-amd64.tgz
 
-RUN ollama  --help
+RUN ollama --help
 
 EXPOSE 11434
 
