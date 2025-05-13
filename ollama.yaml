@@ -13,6 +13,19 @@ spec:
 
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: Modelfile
+data:
+    Modelfile: |-
+      FROM granite3.3
+      PARAMETER temperature 1
+      PARAMETER num_ctx 4096
+
+      SYSTEM You are an assistant to a team of SREs working for an open-source software company.
+
+---
+apiVersion: v1
 kind: Pod
 metadata:
   annotations:
@@ -30,15 +43,15 @@ spec:
         value: 0.0.0.0:11434
       - name: HOME
         value: /home/ollama
-    image: localhost/ollama:latest
-    lifecycle:
-      postStart:
-        exec:
-          command: 
-          - "/bin/bash"
-          - "-c"
-          - "test -f Modelfile && ollama create model --file Modelfile"
+    image: quay.io/chcollin/toolbox-ollama:1a1b246
     name: serve
+    resources:
+      requests:
+        cpu: 4096m
+        memory: 8Gi
+      limits:
+        cpu: 8192m
+        memory: 12Gi
     securityContext:
       runAsNonRoot: true
       privileged: false
@@ -46,6 +59,8 @@ spec:
         type: spc_t
     volumeMounts:
     - mountPath: "/home/ollama"
+      name: Modelfile
+    - mountPath: "/home/ollama/.ollama"
       name: ollama
   - command:
     - "/bin/bash"
@@ -54,14 +69,22 @@ spec:
     env:
       - name: OLLAMA_HOST
         value: 0.0.0.0:11434
-    image: localhost/ollama:latest
+    image: quay.io/chcollin/toolbox-ollama:1a1b246
     name: cli
+    resources:
+      requests:
+        cpu: 1024m
+        memory: 512Mi
     securityContext:
       runAsNonRoot: true
       privileged: false
       seLinuxOptions:
         type: spc_t
   volumes:
+  - name: Modelfile
+    configMap:
+      name: Modelfile
   - name: ollama
     persistentVolumeClaim:
       claimName: ollama
+  restartPolicy: Always
