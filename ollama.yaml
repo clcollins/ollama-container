@@ -17,12 +17,12 @@ kind: ConfigMap
 metadata:
   name: Modelfile
 data:
-    Modelfile: |-
-      FROM granite3.3
-      PARAMETER temperature 1
-      PARAMETER num_ctx 4096
+  Modelfile: |-
+     FROM granite3.3
+     PARAMETER temperature 1
+     PARAMETER num_ctx 4096
 
-      SYSTEM You are an assistant to a team of SREs working for an open-source software company.
+     SYSTEM You are an assistant to a team of SREs working for an open-source software company.
 
 ---
 apiVersion: v1
@@ -80,6 +80,9 @@ spec:
       privileged: false
       seLinuxOptions:
         type: spc_t
+    volumeMounts:
+    - mountPath: "/home/ollama"
+      name: Modelfile
   volumes:
   - name: Modelfile
     configMap:
