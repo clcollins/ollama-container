@@ -2,11 +2,11 @@ REGISTRY_NAME := "quay.io"
 ORG_NAME := "chcollin"
 AUTHFILE := "${HOME}/.config/quay.io/bot_auth.json"
 
-IMAGE_NAME = "ollama"
+IMAGE_NAME = "toolbox-ollama"
 GIT_HASH := $(shell git rev-parse --short HEAD)
 
-TAG := ${REGISTRY_NAME}/${ORG_NAME}/toolbox-${IMAGE_NAME}:${GIT_HASH}
-TAG_LATEST := ${REGISTRY_NAME}/${ORG_NAME}/toolbox-${IMAGE_NAME}:latest
+TAG := ${REGISTRY_NAME}/${ORG_NAME}/${IMAGE_NAME}:${GIT_HASH}
+TAG_LATEST := ${REGISTRY_NAME}/${ORG_NAME}/${IMAGE_NAME}:latest
 
 CONTAINER_SUBSYS?="podman"
 
@@ -26,12 +26,13 @@ isclean:
 
 .PHONY: build
 build: 
-	${CONTAINER_SUBSYS} build ${CACHE} ${BUILD_ARGS} -t ${TAG} .
+	${CONTAINER_SUBSYS} build ${CACHE} ${BUILD_ARGS} -t ${IMAGE_NAME} .
 
 .PHONY: tag
 tag: 
-	${CONTAINER_SUBSYS} tag ${TAG} ${TAG_LATEST}
-	${CONTAINER_SUBSYS} tag ${TAG} ${IMAGE_NAME}:latest
+	${CONTAINER_SUBSYS} tag ${IMAGE_NAME} ${IMAGE_NAME}:${GIT_HASH}
+	${CONTAINER_SUBSYS} tag ${IMAGE_NAME} ${TAG}
+	${CONTAINER_SUBSYS} tag ${IMAGE_NAME} ${TAG_LATEST}
 
 .PHONY: push
 push:
