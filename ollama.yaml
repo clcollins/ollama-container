@@ -30,7 +30,14 @@ spec:
         value: 0.0.0.0:11434
       - name: HOME
         value: /home/ollama
-    image: quay.io/chcollin/toolbox-ollama:latest
+    image: localhost/ollama:latest
+    lifecycle:
+      postStart:
+        exec:
+          command: 
+          - "/bin/bash"
+          - "-c"
+          - "test -f Modelfile && ollama create model --file Modelfile"
     name: serve
     securityContext:
       runAsNonRoot: true
@@ -47,7 +54,7 @@ spec:
     env:
       - name: OLLAMA_HOST
         value: 0.0.0.0:11434
-    image: quay.io/chcollin/toolbox-ollama:latest
+    image: localhost/ollama:latest
     name: cli
     securityContext:
       runAsNonRoot: true
