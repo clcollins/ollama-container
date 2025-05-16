@@ -1,0 +1,6 @@
+.env
+Containerfile
+examples/
+Makefile
+ollama.yaml
+README.md
