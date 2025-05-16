@@ -41,6 +41,8 @@ spec:
     env:
       - name: OLLAMA_HOST
         value: 0.0.0.0:11434
+      - name: OLLAMA_NUM_THREADS
+        value: 8
       - name: HOME
         value: /home/ollama
     image: quay.io/chcollin/toolbox-ollama:1a1b246
