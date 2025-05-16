@@ -1,8 +1,10 @@
-# This is intended to be built into an image for use with Fedora Toolbox
-# and run with `toolbox create --image NAME`. This allows podman on the
-# host to be used from within the toolbox via the flatpak-spawn command.
+FROM registry.fedoraproject.org/fedora-minimal:42 as DNF
 
-FROM registry.fedoraproject.org/fedora-toolbox:42
+RUN dnf install --assumeyes tar gzip \
+  && dnf clean all \
+  && rm -rf /var/yum/cache
+
+FROM DNF
 LABEL author "Chris Collins <collins.christopher@gmail.com>"
 
 LABEL com.github.containers.toolbox="true"
