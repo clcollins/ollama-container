@@ -48,6 +48,7 @@ This will:
 On first run, Ollama will need to retrieve a model to use.  You can retrieve a model with the `ollama pull` command inside the ollama-cli container:
 
 ```bash
+# eg: pull the latest granite3.3 model
 podman exec -it ollama pull granite3.3:latest
 ```
 
@@ -83,9 +84,25 @@ Replace `<your query here>` with your prompt or question.
 podman exec -it ollama-cli ollama run model "What is your Quest?"
 ```
 
+## Creating an Alias for Ollama
+
+You can create an shell alias for Ollama to have it perform as it would in a normal un-containerized installation. Add it to your `~/.bashrc` for persistence.
+
+```bash
+alias ollama='podman exec -it ollama-cli ollama'
+```
+
+### Example
+
+```bash
+ollama run model "What is your Quest?"
+```
+
 ## Interacting with Ollama via the API
 
 The Ollama API is available to other containers or pods, or your local machine, via localhost on the standard Ollama port `11434`. Use the `--publish` flag with `podman kube play` to open the publish (open) the port to the container.
+
+The `examples/ask.py` script is an example connecting to Ollama on `localhost:11434`, and behaves as any other Ollama installation would.
 
 ## Acknowledgments
 
