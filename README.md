@@ -1,4 +1,4 @@
-# toolbox-ollama
+# ollama-container
 
 > ⚠️ This README was partially generated using AI tools, which were also used in the development of this project.
 
