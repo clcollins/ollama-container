@@ -16,7 +16,7 @@ class Spinner:
         self.done = False
 
     def spinner_task(self):
-        spinner_chars = "|/-\\"
+        spinner_chars = "⣾⣽⣻⢿⡿⣟⣯⣷"
         idx = 0
         sys.stdout.write(self.message + " ")
         sys.stdout.flush()
