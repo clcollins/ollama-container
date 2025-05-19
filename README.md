@@ -4,12 +4,12 @@
 
 ## Overview
 
-This repository provides a containerized setup for running [Ollama](https://ollama.com/) — an open-source AI language model runtime — in a Podman-managed environment using `podman kube play`. It includes a `Makefile` for building and managing the container image and configuration files for deploying with Kubernetes-compatible YAML.
+This repository provides a containerized setup for running [Ollama](https://ollama.com/) — an open-source AI language model runtime — in a Podman-managed environment using `podman play kube`. It includes a `Makefile` for building and managing the container image and configuration files for deploying with Kubernetes-compatible YAML.
 
 ## Features
 
 - Run Ollama in a local container with Podman
-- Use `podman kube play` to launch the environment with Kubernetes-style manifests
+- Use `podman play kube` to launch the environment with Kubernetes-style manifests
 - Define your own custom LLM model logic via a `Modelfile` specified in a ConfigMap
 - Interact with Ollama locally using a simple CLI interface or via API
 
@@ -34,7 +34,7 @@ This builds the image defined in the Makefile and tags it as `localhost/ollama`.
 Start the containerized Ollama environment using the Kubernetes-compatible YAML:
 
 ```bash
-podman kube play ollama.yaml
+podman play kube ollama.yaml
 ```
 
 This will:
@@ -65,7 +65,7 @@ podman exec -it ollama create model -f Modelfile
 This will load the model defined in the `Modelfile` on first startup.  If you have already started the pod, you can restart it to update the `Modelfile`. Run:
 
 ```bash
-podman kube play --replace ollama.yaml
+podman play kube --replace ollama.yaml
 ```
 
 ## Interacting with Ollama via the terminal
@@ -100,7 +100,11 @@ ollama run model "What is your Quest?"
 
 ## Interacting with Ollama via the API
 
-The Ollama API is available to other containers or pods, or your local machine, via localhost on the standard Ollama port `11434`. Use the `--publish` flag with `podman kube play` to open the publish (open) the port to the container.
+The Ollama API is available to other containers or pods, or your local machine, via localhost on the standard Ollama port `11434`. Use the `--publish` flag with `podman play kube` to open the publish (open) the port to the container.
+
+```bash
+podman play kube --publish 11434:11434/tcp --replace ollama.yaml
+```
 
 The `examples/ask.py` script is an example connecting to Ollama on `localhost:11434`, and behaves as any other Ollama installation would.
 
