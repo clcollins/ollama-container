@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
+import os
 import requests
 import sys
 import time
 import threading
 
-OLLAMA_HOST = "http://localhost:11434"
-MODEL_NAME = "SRE"  # Replace with your actual model name if different
+OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
+MODEL_NAME = os.environ.get("OLLAMA_MODEL", "SRE")
 PROMPT = "What is your Quest?"
 
 class Spinner:

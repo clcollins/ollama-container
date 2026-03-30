@@ -9,7 +9,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi
+      storage: 10Gi
 
 ---
 apiVersion: v1
@@ -18,9 +18,9 @@ metadata:
   name: Modelfile
 data:
   Modelfile: |-
-     FROM granite3.3
+     FROM llama3.1
      PARAMETER temperature 1
-     PARAMETER num_ctx 4096
+     PARAMETER num_ctx 8192
 
      SYSTEM You are an assistant to a team of SREs working for an open-source software company.
 
@@ -54,6 +54,20 @@ spec:
       limits:
         cpu: 8192m
         memory: 12Gi
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 11434
+      initialDelaySeconds: 30
+      periodSeconds: 30
+      failureThreshold: 3
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 11434
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      failureThreshold: 3
     securityContext:
       runAsNonRoot: true
       privileged: false
@@ -75,6 +89,9 @@ spec:
     name: cli
     resources:
       requests:
+        cpu: 1024m
+        memory: 512Mi
+      limits:
         cpu: 1024m
         memory: 512Mi
     securityContext:
