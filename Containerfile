@@ -1,4 +1,4 @@
-FROM registry.fedoraproject.org/fedora-minimal:42 as deps
+FROM registry.fedoraproject.org/fedora-minimal:43 as deps
 
 RUN dnf install --assumeyes tar gzip \
   && dnf clean all \

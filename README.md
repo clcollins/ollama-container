@@ -166,6 +166,10 @@ ollama run model "What is your Quest?"
 
 The Ollama API is available to other containers or pods, or your local machine, via localhost on the standard Ollama port `11434`. Use the `--publish` flag with `podman kube play` to publish (open) the port from the container to your host.
 
+```bash
+podman kube play --publish 127.0.0.1:11434:11434/tcp --replace ollama.yaml
+```
+
 The `examples/ask.py` script is an example connecting to Ollama on `localhost:11434`, and behaves as any other Ollama installation would. You can configure the host and model name via environment variables:
 
 ```bash
