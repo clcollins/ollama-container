@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: Modelfile
+  name: ollama-modelfile
   namespace: ollama
   labels:
     app: ollama

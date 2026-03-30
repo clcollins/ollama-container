@@ -18,8 +18,13 @@ ENV OLLAMA_HOST 0.0.0.0:11434
 RUN mkdir -p /home/ollama
 RUN chmod -R 777 /home/ollama
 
-ARG TARGETARCH=amd64
-RUN curl -sSL https://ollama.com/download/ollama-linux-${TARGETARCH}.tgz -o- | tar -C /usr -xzv
+RUN arch="$(uname -m)" \
+  && case "$arch" in \
+       x86_64) target_arch="amd64" ;; \
+       aarch64|arm64) target_arch="arm64" ;; \
+       *) echo "Unsupported architecture: $arch" >&2; exit 1 ;; \
+     esac \
+  && curl -sSL "https://ollama.com/download/ollama-linux-${target_arch}.tgz" -o- | tar -C /usr -xzv
 
 WORKDIR /home/ollama
 

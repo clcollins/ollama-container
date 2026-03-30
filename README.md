@@ -52,7 +52,7 @@ This builds the image defined in the Makefile and tags it as `localhost/ollama`.
 To build for a different architecture (e.g., ARM):
 
 ```bash
-podman build --platform linux/arm64 -t ollama .
+podman build --platform linux/arm64 -t localhost/ollama .
 ```
 
 ## Deploy with Podman (Local)
@@ -163,7 +163,7 @@ ollama run model "What is your Quest?"
 
 ## Interacting with Ollama via the API
 
-The Ollama API is available to other containers or pods, or your local machine, via localhost on the standard Ollama port `11434`. Use the `--publish` flag with `podman kube play` to open the publish (open) the port to the container.
+The Ollama API is available to other containers or pods, or your local machine, via localhost on the standard Ollama port `11434`. Use the `--publish` flag with `podman kube play` to publish (open) the port from the container to your host.
 
 The `examples/ask.py` script is an example connecting to Ollama on `localhost:11434`, and behaves as any other Ollama installation would. You can configure the host and model name via environment variables:
 

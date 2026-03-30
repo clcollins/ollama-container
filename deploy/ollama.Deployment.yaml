@@ -57,10 +57,12 @@ spec:
           failureThreshold: 3
         securityContext:
           runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
           privileged: false
         volumeMounts:
         - mountPath: "/home/ollama"
-          name: Modelfile
+          name: ollama-modelfile
         - mountPath: "/home/ollama/.ollama"
           name: ollama
       - name: cli
@@ -81,14 +83,16 @@ spec:
             memory: 512Mi
         securityContext:
           runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
           privileged: false
         volumeMounts:
         - mountPath: "/home/ollama"
-          name: Modelfile
+          name: ollama-modelfile
       volumes:
-      - name: Modelfile
+      - name: ollama-modelfile
         configMap:
-          name: Modelfile
+          name: ollama-modelfile
       - name: ollama
         persistentVolumeClaim:
           claimName: ollama
