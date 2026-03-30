@@ -105,7 +105,7 @@ The Ollama API will be available within the cluster at `ollama.ollama.svc.cluste
 On first run, Ollama will need to retrieve a model to use. You can retrieve a model with the `ollama pull` command inside the cli container:
 
 ```bash
-# For podman:
+# For Podman:
 podman exec -it ollama-cli ollama pull llama3.1:latest
 
 # For Kubernetes:
@@ -119,14 +119,14 @@ A sample `Modelfile` used by Ollama to define the model behavior is mounted as a
 To initialize a new model using a custom `Modelfile`, run:
 
 ```bash
-# For podman:
+# For Podman:
 podman exec -it ollama-cli ollama create model -f Modelfile
 
 # For Kubernetes:
 kubectl exec -it -n ollama deployment/ollama -c cli -- ollama create model -f Modelfile
 ```
 
-This will load the model defined in the `Modelfile` on first startup.  If you have already started the pod, you can restart it to update the `Modelfile`. Run:
+This will load the model defined in the `Modelfile` on first startup. If you have already started the pod, you can restart it to update the `Modelfile`. Run:
 
 ```bash
 podman kube play --replace ollama.yaml
