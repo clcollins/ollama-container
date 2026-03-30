@@ -169,7 +169,7 @@ The Ollama API is available to other containers or pods, or your local machine, 
 The `examples/ask.py` script is an example connecting to Ollama on `localhost:11434`, and behaves as any other Ollama installation would. You can configure the host and model name via environment variables:
 
 ```bash
-OLLAMA_HOST=http://localhost:11434 OLLAMA_MODEL=SRE python3 examples/ask.py
+OLLAMA_HOST=http://localhost:11434 OLLAMA_MODEL=model python3 examples/ask.py
 ```
 
 ## Resource Limits

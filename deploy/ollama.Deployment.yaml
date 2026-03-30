@@ -18,6 +18,8 @@ spec:
       labels:
         app: ollama
     spec:
+      securityContext:
+        fsGroup: 1000
       containers:
       - name: serve
         # TODO: Replace with your own image registry and tag
