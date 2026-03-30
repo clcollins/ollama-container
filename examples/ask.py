@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
 import os
-import requests
 import sys
 import time
 import threading
+
+import requests
 
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 if "://" not in OLLAMA_HOST:

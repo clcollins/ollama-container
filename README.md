@@ -25,7 +25,7 @@ This repository provides a containerized setup for running [Ollama](https://olla
 
 ## Model Selection
 
-The default model is `llama3.1` (8B parameters), configured in the `Modelfile` ConfigMap. You can change the model by editing the `FROM` line in the ConfigMap in `ollama.yaml` (for podman) or `deploy/ollama-modelfile.ConfigMap.yaml` (for Kubernetes).
+The default model is `llama3.1` (8B parameters), configured in the `Modelfile` ConfigMap. You can change the model by editing the `FROM` line in the ConfigMap in `ollama.yaml` (for Podman) or `deploy/ollama-modelfile.ConfigMap.yaml` (for Kubernetes).
 
 ### Model Sizing Guide
 
