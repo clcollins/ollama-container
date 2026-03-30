@@ -67,7 +67,7 @@ This will:
 
 - Create a Pod running the Ollama container
 - Mount a `Modelfile` from a ConfigMap
-- Set up the necessary volumes for model storage and logs
+- Set up the necessary volume for model storage
 - Apply resource limits (CPU and memory) to prevent overconsumption
 - Configure health probes to automatically restart unhealthy containers
 
@@ -102,7 +102,7 @@ The Ollama API will be available within the cluster at `ollama.ollama.svc.cluste
 
 ## Downloading a model
 
-On first run, Ollama will need to retrieve a model to use.  You can retrieve a model with the `ollama pull` command inside the cli container:
+On first run, Ollama will need to retrieve a model to use. You can retrieve a model with the `ollama pull` command inside the cli container:
 
 ```bash
 # For podman:
