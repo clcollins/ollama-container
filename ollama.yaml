@@ -84,7 +84,7 @@ spec:
     - "trap TERM INT; sleep infinity & wait"
     env:
       - name: OLLAMA_HOST
-        value: 0.0.0.0:11434
+        value: http://localhost:11434
     image: quay.io/chcollin/toolbox-ollama:1a1b246
     name: cli
     resources:

@@ -7,6 +7,8 @@ import time
 import threading
 
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
+if "://" not in OLLAMA_HOST:
+    OLLAMA_HOST = f"http://{OLLAMA_HOST}"
 MODEL_NAME = os.environ.get("OLLAMA_MODEL", "SRE")
 PROMPT = "What is your Quest?"
 
