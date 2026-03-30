@@ -84,9 +84,10 @@ deploy/
   ollama.Service.yaml
 ```
 
-Apply all resources to your cluster:
+Apply the Namespace first, then the remaining resources:
 
 ```bash
+kubectl apply -f deploy/ollama.Namespace.yaml
 kubectl apply -f deploy/
 ```
 
@@ -101,14 +102,14 @@ The Ollama API will be available within the cluster at `ollama.ollama.svc.cluste
 
 ## Downloading a model
 
-On first run, Ollama will need to retrieve a model to use.  You can retrieve a model with the `ollama pull` command inside the serve container:
+On first run, Ollama will need to retrieve a model to use.  You can retrieve a model with the `ollama pull` command inside the cli container:
 
 ```bash
 # For podman:
-podman exec -it ollama-serve ollama pull llama3.1:latest
+podman exec -it ollama-cli ollama pull llama3.1:latest
 
 # For Kubernetes:
-kubectl exec -it -n ollama deployment/ollama -c serve -- ollama pull llama3.1:latest
+kubectl exec -it -n ollama deployment/ollama -c cli -- ollama pull llama3.1:latest
 ```
 
 ### Customizing the Modelfile
@@ -119,10 +120,10 @@ To initialize a new model using a custom `Modelfile`, run:
 
 ```bash
 # For podman:
-podman exec -it ollama-serve ollama create model -f Modelfile
+podman exec -it ollama-cli ollama create model -f Modelfile
 
 # For Kubernetes:
-kubectl exec -it -n ollama deployment/ollama -c serve -- ollama create model -f Modelfile
+kubectl exec -it -n ollama deployment/ollama -c cli -- ollama create model -f Modelfile
 ```
 
 This will load the model defined in the `Modelfile` on first startup.  If you have already started the pod, you can restart it to update the `Modelfile`. Run:

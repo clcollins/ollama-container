@@ -20,6 +20,7 @@ spec:
     spec:
       containers:
       - name: serve
+        # TODO: Replace with your own image registry and tag
         image: quay.io/chcollin/toolbox-ollama:1a1b246
         command:
         - /bin/ollama
@@ -67,6 +68,7 @@ spec:
         - mountPath: "/home/ollama/.ollama"
           name: ollama
       - name: cli
+        # TODO: Replace with your own image registry and tag
         image: quay.io/chcollin/toolbox-ollama:1a1b246
         command:
         - "/bin/bash"
