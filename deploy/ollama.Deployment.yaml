@@ -1,0 +1,104 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  namespace: ollama
+  labels:
+    app: ollama
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: ollama
+  template:
+    metadata:
+      labels:
+        app: ollama
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+      - name: serve
+        # TODO: Replace with your own image registry and tag
+        image: quay.io/chcollin/toolbox-ollama:1a1b246
+        command:
+        - /bin/ollama
+        - serve
+        env:
+          - name: OLLAMA_HOST
+            value: 0.0.0.0:11434
+          - name: OLLAMA_NUM_THREADS
+            value: "8"
+          - name: HOME
+            value: /home/ollama
+        ports:
+        - containerPort: 11434
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 4096m
+            memory: 8Gi
+          limits:
+            cpu: 8192m
+            memory: 12Gi
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 11434
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 11434
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          failureThreshold: 3
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          privileged: false
+        volumeMounts:
+        - mountPath: "/home/ollama/Modelfile"
+          name: ollama-modelfile
+          subPath: Modelfile
+        - mountPath: "/home/ollama/.ollama"
+          name: ollama
+      - name: cli
+        # TODO: Replace with your own image registry and tag
+        image: quay.io/chcollin/toolbox-ollama:1a1b246
+        command:
+        - "/bin/bash"
+        - "-c"
+        - "trap TERM INT; sleep infinity & wait"
+        env:
+          - name: OLLAMA_HOST
+            value: http://localhost:11434
+        resources:
+          requests:
+            cpu: 1024m
+            memory: 512Mi
+          limits:
+            cpu: 1024m
+            memory: 512Mi
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          privileged: false
+        volumeMounts:
+        - mountPath: "/home/ollama/Modelfile"
+          name: ollama-modelfile
+          subPath: Modelfile
+      volumes:
+      - name: ollama-modelfile
+        configMap:
+          name: ollama-modelfile
+      - name: ollama
+        persistentVolumeClaim:
+          claimName: ollama

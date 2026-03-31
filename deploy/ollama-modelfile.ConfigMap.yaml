@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ollama-modelfile
+  namespace: ollama
+  labels:
+    app: ollama
+data:
+  Modelfile: |-
+     FROM llama3.1
+     PARAMETER temperature 1
+     PARAMETER num_ctx 8192
+
+     SYSTEM You are an assistant to a team of SREs working for an open-source software company.
