@@ -1,0 +1,84 @@
+name: Container Image Build & Push
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+env:
+  REGISTRY: quay.io
+
+jobs:
+  image-build-push:
+    name: Build & Push Container Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install QEMU for multi-arch builds
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y qemu-user-static
+
+      - name: Set build metadata
+        id: meta
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          FULL_IMAGE="${{ env.REGISTRY }}/${{ secrets.QUAY_REPOSITORY }}"
+
+          echo "short_sha=${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "full_image=${FULL_IMAGE}" >> "$GITHUB_OUTPUT"
+
+          # Build tag list
+          TAGS="${FULL_IMAGE}:${SHORT_SHA}"
+
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            VERSION="${{ github.ref_name }}"
+            VERSION_NO_V="${VERSION#v}"
+            TAGS="${TAGS} ${FULL_IMAGE}:${VERSION_NO_V}"
+          else
+            TAGS="${TAGS} ${FULL_IMAGE}:latest"
+          fi
+
+          echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to Quay.io
+        run: |
+          echo "${{ secrets.QUAY_ROBOT_TOKEN }}" | podman login ${{ env.REGISTRY }} \
+            --username "${{ secrets.QUAY_ROBOT_USERNAME }}" \
+            --password-stdin
+
+      - name: Build linux/amd64 image
+        run: |
+          podman build \
+            --platform linux/amd64 \
+            --build-arg GIT_HASH=${{ steps.meta.outputs.short_sha }} \
+            -t ${{ steps.meta.outputs.full_image }}:${{ steps.meta.outputs.short_sha }}-amd64 .
+
+      - name: Build linux/arm64 image
+        run: |
+          podman build \
+            --platform linux/arm64 \
+            --build-arg GIT_HASH=${{ steps.meta.outputs.short_sha }} \
+            -t ${{ steps.meta.outputs.full_image }}:${{ steps.meta.outputs.short_sha }}-arm64 .
+
+      - name: Create and push multi-arch manifest
+        run: |
+          FULL_IMAGE="${{ steps.meta.outputs.full_image }}"
+          SHORT_SHA="${{ steps.meta.outputs.short_sha }}"
+          TAGS="${{ steps.meta.outputs.tags }}"
+
+          # Create manifest with both architectures
+          podman manifest create "${FULL_IMAGE}:${SHORT_SHA}"
+          podman manifest add "${FULL_IMAGE}:${SHORT_SHA}" \
+            "containers-storage:${FULL_IMAGE}:${SHORT_SHA}-amd64"
+          podman manifest add "${FULL_IMAGE}:${SHORT_SHA}" \
+            "containers-storage:${FULL_IMAGE}:${SHORT_SHA}-arm64"
+
+          # Push the manifest under each tag
+          for TAG in ${TAGS}; do
+            podman manifest push --all "${FULL_IMAGE}:${SHORT_SHA}" "docker://${TAG}"
+          done
