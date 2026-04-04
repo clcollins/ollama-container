@@ -13,6 +13,7 @@ if "://" not in OLLAMA_HOST:
 MODEL_NAME = os.environ.get("OLLAMA_MODEL", "model")
 PROMPT = "What is your Quest?"
 
+
 class Spinner:
     def __init__(self, message="Processing...", done_message="Done!"):
         self.message = message
@@ -42,13 +43,14 @@ class Spinner:
         sys.stdout.write(f"\b{self.done_message}\n")
         sys.stdout.flush()
 
+
 def query_ollama(model: str, prompt: str) -> str:
     url = f"{OLLAMA_HOST}/api/generate"
     headers = {"Content-Type": "application/json"}
     payload = {
         "model": model,
         "prompt": prompt,
-        "stream": False  # Set to True if you want to handle streaming responses
+        "stream": False,  # Set to True if you want to handle streaming responses
     }
 
     try:
@@ -61,10 +63,13 @@ def query_ollama(model: str, prompt: str) -> str:
     except ValueError:
         return "Failed to decode JSON response"
 
+
 if __name__ == "__main__":
-    spinner = Spinner(f"Query: {PROMPT} (Model: {MODEL_NAME}, Host: {OLLAMA_HOST})\n", f"Response from Ollama:\n")
+    spinner = Spinner(
+        f"Query: {PROMPT} (Model: {MODEL_NAME}, Host: {OLLAMA_HOST})\n",
+        "Response from Ollama:\n",
+    )
     spinner.start()
     answer = query_ollama(MODEL_NAME, PROMPT)
     spinner.stop()
     print(answer)
-

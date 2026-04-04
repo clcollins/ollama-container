@@ -32,7 +32,7 @@ The default model is `llama3.1` (8B parameters), configured in the `Modelfile` C
 Adjust resource limits in the pod/deployment manifest to match your chosen model:
 
 | Model | Parameters | RAM Required | CPU Recommended | PVC Size |
-|-------|-----------|-------------|-----------------|----------|
+| ----- | ---------- | ------------ | --------------- | -------- |
 | llama3.2 | 3B | ~4Gi | 4 cores | 5Gi |
 | llama3.1 | 8B | ~8Gi | 4 cores | 10Gi |
 | qwen2.5 | 7B | ~8Gi | 4 cores | 10Gi |
@@ -75,7 +75,7 @@ This will:
 
 The `deploy/` directory contains standalone Kubernetes manifests following one-resource-per-file conventions:
 
-```
+```text
 deploy/
   ollama.Namespace.yaml
   ollama.PersistentVolumeClaim.yaml
@@ -92,6 +92,7 @@ kubectl apply -f deploy/
 ```
 
 This creates:
+
 - A dedicated `ollama` namespace
 - A PersistentVolumeClaim using the cluster's default storage class
 - A ConfigMap with the Modelfile

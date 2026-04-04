@@ -1,0 +1,166 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CI_IMAGE: ollama-ci
+
+jobs:
+  ci-image:
+    name: Build CI Container
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build CI container
+        run: podman build -f test/Containerfile.ci -t ${CI_IMAGE} test/
+
+      - name: Save CI container image
+        run: podman save ${CI_IMAGE} -o /tmp/ollama-ci.tar
+
+      - name: Upload CI container image
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-image
+          path: /tmp/ollama-ci.tar
+          retention-days: 1
+
+  yaml-lint:
+    name: YAML Lint
+    needs: ci-image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ci-image
+          path: /tmp
+      - run: podman load -i /tmp/ollama-ci.tar
+      - run: podman run --rm -v "$(pwd):/work:Z" ${CI_IMAGE} make yaml-lint
+
+  markdown-lint:
+    name: Markdown Lint
+    needs: ci-image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ci-image
+          path: /tmp
+      - run: podman load -i /tmp/ollama-ci.tar
+      - run: podman run --rm -v "$(pwd):/work:Z" ${CI_IMAGE} make markdown-lint
+
+  makefile-lint:
+    name: Makefile Lint
+    needs: ci-image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ci-image
+          path: /tmp
+      - run: podman load -i /tmp/ollama-ci.tar
+      - run: podman run --rm -v "$(pwd):/work:Z" ${CI_IMAGE} make makefile-lint
+
+  containerfile-check:
+    name: Containerfile Check
+    needs: ci-image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ci-image
+          path: /tmp
+      - run: podman load -i /tmp/ollama-ci.tar
+      - run: podman run --rm -v "$(pwd):/work:Z" ${CI_IMAGE} make containerfile-check
+
+  kubernetes-validate:
+    name: Kubernetes Manifest Validation
+    needs: ci-image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ci-image
+          path: /tmp
+      - run: podman load -i /tmp/ollama-ci.tar
+      - run: podman run --rm -v "$(pwd):/work:Z" ${CI_IMAGE} make kubernetes-validate
+
+  python-lint:
+    name: Python Lint
+    needs: ci-image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ci-image
+          path: /tmp
+      - run: podman load -i /tmp/ollama-ci.tar
+      - run: podman run --rm -v "$(pwd):/work:Z" ${CI_IMAGE} make python-lint
+
+  shellcheck-lint:
+    name: ShellCheck
+    needs: ci-image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ci-image
+          path: /tmp
+      - run: podman load -i /tmp/ollama-ci.tar
+      - run: podman run --rm -v "$(pwd):/work:Z" ${CI_IMAGE} make shellcheck-lint
+
+  docs-check:
+    name: Documentation Check
+    needs: ci-image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ci-image
+          path: /tmp
+      - run: podman load -i /tmp/ollama-ci.tar
+      - run: podman run --rm -v "$(pwd):/work:Z" ${CI_IMAGE} make docs-check
+
+  image-build:
+    name: Container Image Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build container image
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          podman build \
+            --build-arg GIT_HASH="${SHORT_SHA}" \
+            -t ollama:ci .
+
+      - name: Verify ollama runs
+        run: podman run --rm ollama:ci ollama --help
+
+      - name: Validate OCI labels
+        run: |
+          inspect=$(podman inspect ollama:ci)
+          for label in \
+            "org.opencontainers.image.title" \
+            "org.opencontainers.image.description" \
+            "org.opencontainers.image.revision" \
+            "org.opencontainers.image.version" \
+            "org.opencontainers.image.source"; do
+            value=$(echo "${inspect}" | jq -r ".[0].Config.Labels[\"${label}\"]")
+            if [ "${value}" = "null" ] || [ -z "${value}" ]; then
+              echo "ERROR: Missing label: ${label}"
+              exit 1
+            fi
+            echo "OK: ${label}=${value}"
+          done
