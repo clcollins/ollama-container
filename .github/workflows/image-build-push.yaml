@@ -28,24 +28,26 @@ jobs:
         id: meta
         run: |
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-          FULL_IMAGE="${{ env.REGISTRY }}/${{ secrets.QUAY_REPOSITORY }}"
-
           echo "short_sha=${SHORT_SHA}" >> "$GITHUB_OUTPUT"
-          echo "full_image=${FULL_IMAGE}" >> "$GITHUB_OUTPUT"
 
-          # Build tag list
-          TAGS="${FULL_IMAGE}:${SHORT_SHA}"
-
-          if [ "${{ github.ref_type }}" = "tag" ]; then
-            VERSION="${{ github.ref_name }}"
-            VERSION_NO_V="${VERSION#v}"
-            TAGS="${TAGS} ${FULL_IMAGE}:${VERSION_NO_V}"
-          elif [ "${{ github.event_name }}" = "pull_request" ]; then
-            TAGS="${FULL_IMAGE}:pr-${{ github.event.pull_request.number }}"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # PR builds use a local-only image name (no registry, no secrets needed)
+            FULL_IMAGE="ollama"
+            TAGS="${FULL_IMAGE}:pr-${{ github.event.pull_request.number }} ${FULL_IMAGE}:${SHORT_SHA}"
           else
-            TAGS="${TAGS} ${FULL_IMAGE}:latest"
+            FULL_IMAGE="${{ env.REGISTRY }}/${{ secrets.QUAY_REPOSITORY }}"
+            TAGS="${FULL_IMAGE}:${SHORT_SHA}"
+
+            if [ "${{ github.ref_type }}" = "tag" ]; then
+              VERSION="${{ github.ref_name }}"
+              VERSION_NO_V="${VERSION#v}"
+              TAGS="${TAGS} ${FULL_IMAGE}:${VERSION_NO_V}"
+            else
+              TAGS="${TAGS} ${FULL_IMAGE}:latest"
+            fi
           fi
 
+          echo "full_image=${FULL_IMAGE}" >> "$GITHUB_OUTPUT"
           echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
 
       - name: Log in to Quay.io

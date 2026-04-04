@@ -9,9 +9,13 @@ a broken Containerfile would only be caught after merging.
 ## Changes
 
 - Added `pull_request` to the workflow trigger
-- Build steps run on all events (push, tag, PR)
+- PR builds use a local-only image name (`ollama`) instead of the registry
+  path, avoiding dependency on `QUAY_REPOSITORY` secret (which is unavailable
+  on fork PRs)
+- PR builds are tagged with both `pr-<number>` and short SHA for identification
 - Login and push steps are skipped on PRs via `if: github.event_name != 'pull_request'`
-- PR builds get a `pr-<number>` tag for local identification
+- Non-PR builds (main push, tags) continue to use the full registry path and
+  push to Quay.io as before
 
 ## Verification
 
