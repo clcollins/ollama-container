@@ -33,7 +33,13 @@ RUN arch="$(uname -m)" \
 
 # kubeconform (K8s manifest validator) — pre-built binary
 ARG KUBECONFORM_VERSION=v0.6.7
-RUN curl -sSL "https://github.com/yannh/kubeconform/releases/download/${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz" \
+RUN arch="$(uname -m)" \
+  && case "$arch" in \
+       x86_64) target_arch="amd64" ;; \
+       aarch64|arm64) target_arch="arm64" ;; \
+       *) echo "Unsupported architecture: $arch" >&2; exit 1 ;; \
+     esac \
+  && curl -fsSL "https://github.com/yannh/kubeconform/releases/download/${KUBECONFORM_VERSION}/kubeconform-linux-${target_arch}.tar.gz" \
       | tar -C /usr/local/bin -xzv kubeconform
 
 WORKDIR /work

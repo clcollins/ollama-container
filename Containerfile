@@ -29,7 +29,7 @@ RUN arch="$(uname -m)" \
        aarch64|arm64) target_arch="arm64" ;; \
        *) echo "Unsupported architecture: $arch" >&2; exit 1 ;; \
      esac \
-  && curl -sSL "https://ollama.com/download/ollama-linux-${target_arch}.tar.zst" -o- | tar -C /usr --zstd -xv
+  && curl -fsSL "https://ollama.com/download/ollama-linux-${target_arch}.tar.zst" -o- | tar -C /usr --zstd -xv
 
 WORKDIR /home/ollama
 

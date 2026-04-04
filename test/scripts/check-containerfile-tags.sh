@@ -51,7 +51,7 @@ while IFS= read -r line; do
   # Check for known registry
   registry_found=0
   for registry in "${KNOWN_REGISTRIES[@]}"; do
-    if [[ "${image}" =~ ^${registry} ]]; then
+    if [[ "${image}" == "${registry}/"* ]]; then
       registry_found=1
       break
     fi
