@@ -12,7 +12,8 @@ a broken Containerfile would only be caught after merging.
 - PR builds use a local-only image name (`ollama`) instead of the registry
   path, avoiding dependency on `QUAY_REPOSITORY` secret (which is unavailable
   on fork PRs)
-- PR builds are tagged with both `pr-<number>` and short SHA for identification
+- PR builds produce per-arch images tagged as `ollama:<sha>-amd64` and
+  `ollama:<sha>-arm64` for build validation only (no manifest created, no push)
 - Login and push steps are skipped on PRs via `if: github.event_name != 'pull_request'`
 - Non-PR builds (main push, tags) continue to use the full registry path and
   push to Quay.io as before

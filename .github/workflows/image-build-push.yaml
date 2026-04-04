@@ -32,8 +32,9 @@ jobs:
 
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             # PR builds use a local-only image name (no registry, no secrets needed)
+            # Tags are only used for per-arch build identification — no manifest/push
             FULL_IMAGE="ollama"
-            TAGS="${FULL_IMAGE}:pr-${{ github.event.pull_request.number }} ${FULL_IMAGE}:${SHORT_SHA}"
+            TAGS=""
           else
             FULL_IMAGE="${{ env.REGISTRY }}/${{ secrets.QUAY_REPOSITORY }}"
             TAGS="${FULL_IMAGE}:${SHORT_SHA}"
