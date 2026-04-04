@@ -153,8 +153,10 @@ jobs:
           inspect=$(podman inspect ollama:ci)
           for label in \
             "org.opencontainers.image.title" \
+            "org.opencontainers.image.description" \
             "org.opencontainers.image.revision" \
-            "org.opencontainers.image.version"; do
+            "org.opencontainers.image.version" \
+            "org.opencontainers.image.source"; do
             value=$(echo "${inspect}" | jq -r ".[0].Config.Labels[\"${label}\"]")
             if [ "${value}" = "null" ] || [ -z "${value}" ]; then
               echo "ERROR: Missing label: ${label}"
