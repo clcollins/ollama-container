@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     tags: ['v*']
+  pull_request:
 
 env:
   REGISTRY: quay.io
@@ -39,6 +40,8 @@ jobs:
             VERSION="${{ github.ref_name }}"
             VERSION_NO_V="${VERSION#v}"
             TAGS="${TAGS} ${FULL_IMAGE}:${VERSION_NO_V}"
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            TAGS="${FULL_IMAGE}:pr-${{ github.event.pull_request.number }}"
           else
             TAGS="${TAGS} ${FULL_IMAGE}:latest"
           fi
@@ -46,6 +49,7 @@ jobs:
           echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
 
       - name: Log in to Quay.io
+        if: github.event_name != 'pull_request'
         run: |
           echo "${{ secrets.QUAY_ROBOT_TOKEN }}" | podman login ${{ env.REGISTRY }} \
             --username "${{ secrets.QUAY_ROBOT_USERNAME }}" \
@@ -66,6 +70,7 @@ jobs:
             -t ${{ steps.meta.outputs.full_image }}:${{ steps.meta.outputs.short_sha }}-arm64 .
 
       - name: Create and push multi-arch manifest
+        if: github.event_name != 'pull_request'
         run: |
           FULL_IMAGE="${{ steps.meta.outputs.full_image }}"
           SHORT_SHA="${{ steps.meta.outputs.short_sha }}"
