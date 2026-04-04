@@ -27,7 +27,7 @@ RUN arch="$(uname -m)" \
        aarch64|arm64) target_arch="arm64" ;; \
        *) echo "Unsupported architecture: $arch" >&2; exit 1 ;; \
      esac \
-  && curl -sSL "https://github.com/mrtazz/checkmake/releases/download/${CHECKMAKE_VERSION}/checkmake-${CHECKMAKE_VERSION}.linux.${target_arch}" \
+  && curl -fsSL "https://github.com/mrtazz/checkmake/releases/download/${CHECKMAKE_VERSION}/checkmake-${CHECKMAKE_VERSION}.linux.${target_arch}" \
        -o /usr/local/bin/checkmake \
   && chmod +x /usr/local/bin/checkmake
 

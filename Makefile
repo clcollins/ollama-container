@@ -44,7 +44,7 @@ build:
 
 .PHONY: tag
 tag:
-	@(test -n $(REGISTRY_NAME) && test -n $(ORG_NAME)) || (echo "REGISTRY_NAME or ORG_NAME not set" >&2 && exit 1)
+	@(test -n "$(REGISTRY_NAME)" && test -n "$(ORG_NAME)") || (echo "REGISTRY_NAME or ORG_NAME not set" >&2 && exit 1)
 	${CONTAINER_SUBSYS} tag ${IMAGE_NAME} ${TAG}
 	${CONTAINER_SUBSYS} tag ${IMAGE_NAME} ${TAG_LATEST}
 

@@ -2,7 +2,7 @@ FROM registry.fedoraproject.org/fedora-minimal:42 as deps
 
 RUN dnf install --assumeyes tar zstd \
   && dnf clean all \
-  && rm -rf /var/yum/cache
+  && rm -rf /var/cache/yum
 
 FROM deps
 LABEL author "Chris Collins <collins.christopher@gmail.com>"
