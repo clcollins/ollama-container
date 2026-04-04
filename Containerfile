@@ -1,6 +1,6 @@
 FROM registry.fedoraproject.org/fedora-minimal:42 as deps
 
-RUN dnf install --assumeyes tar gzip \
+RUN dnf install --assumeyes tar zstd \
   && dnf clean all \
   && rm -rf /var/yum/cache
 
@@ -24,7 +24,7 @@ RUN arch="$(uname -m)" \
        aarch64|arm64) target_arch="arm64" ;; \
        *) echo "Unsupported architecture: $arch" >&2; exit 1 ;; \
      esac \
-  && curl -sSL "https://ollama.com/download/ollama-linux-${target_arch}.tgz" -o- | tar -C /usr -xzv
+  && curl -sSL "https://ollama.com/download/ollama-linux-${target_arch}.tar.zst" -o- | tar -C /usr --zstd -xv
 
 WORKDIR /home/ollama
 
