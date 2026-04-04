@@ -1,4 +1,4 @@
-# Plan 004: GitHub Actions Workflow for Container Image Builds
+# GitHub Actions Workflow for Container Image Builds
 
 > Retroactive plan document for PR #4, created after merge.
 
@@ -31,7 +31,7 @@ PR #4 merged on 2026-04-03 (commit `ddf9ad7`), which triggered the new workflow 
 
 **The workflow failed at the "Build linux/amd64 image" step** with:
 
-```
+```text
 gzip: stdin: not in gzip format
 tar: Child returned status 1
 tar: Error is not recoverable: exiting now
@@ -67,11 +67,13 @@ Upstream projects can change distribution formats, URLs, or hosting without noti
 ### 3. Piping `curl` directly to `tar` masks failures
 
 The pattern `curl -sSL <url> -o- | tar -xzv` is concise but dangerous:
+
 - `-sS` suppresses progress but shows errors — however, HTTP 404 responses are not curl errors when following redirects
 - The pipe means `tar` receives whatever `curl` outputs, even if it's an HTML error page or "Not Found" text
 - The exit code of the pipeline is the exit code of `tar`, not `curl`
 
 **Safer alternatives**:
+
 - Download to a temp file first, verify it, then extract
 - Use `set -o pipefail` in the shell so the pipeline fails if `curl` fails
 - Check the downloaded content-type or file magic before extraction

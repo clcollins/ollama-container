@@ -4,3 +4,8 @@ examples/
 Makefile
 ollama.yaml
 README.md
+test/
+.yamllint.yaml
+.markdownlint.yaml
+.github/
+docs/

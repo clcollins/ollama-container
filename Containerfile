@@ -6,11 +6,16 @@ RUN dnf install --assumeyes tar zstd \
 
 FROM deps
 LABEL author "Chris Collins <collins.christopher@gmail.com>"
-
 LABEL com.github.containers.toolbox="true"
 
 ARG GIT_HASH
 LABEL toolbox-ollama-version ${GIT_HASH}
+
+LABEL org.opencontainers.image.title="ollama-container"
+LABEL org.opencontainers.image.description="Containerized Ollama AI runtime"
+LABEL org.opencontainers.image.revision=${GIT_HASH}
+LABEL org.opencontainers.image.version=${GIT_HASH}
+LABEL org.opencontainers.image.source="https://github.com/clcollins/ollama-container"
 
 ENV OLLAMA_PORT 11434
 ENV OLLAMA_HOST 0.0.0.0:11434
