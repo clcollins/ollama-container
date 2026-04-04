@@ -3,6 +3,7 @@ FROM registry.fedoraproject.org/fedora-minimal:42
 RUN dnf install --assumeyes \
       make \
       git \
+      curl \
       tar \
       gzip \
       ShellCheck \

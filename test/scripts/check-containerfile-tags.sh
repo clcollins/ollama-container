@@ -33,7 +33,7 @@ echo "Checking ${CONTAINERFILE}..."
 
 while IFS= read -r line; do
   # Extract image reference (skip "AS" alias)
-  image=$(echo "${line}" | sed -E 's/^FROM\s+//i; s/\s+[Aa][Ss]\s+.*//; s/\s*$//')
+  image=$(echo "${line}" | sed -E 's/^[Ff][Rr][Oo][Mm][[:space:]]+//; s/[[:space:]]+[Aa][Ss][[:space:]]+.*//; s/[[:space:]]*$//')
 
   # Skip build stage references (no / or . in the name)
   if [[ ! "${image}" =~ [/.] ]]; then
@@ -64,7 +64,7 @@ while IFS= read -r line; do
     fi
   fi
 
-done < <(grep -iE '^FROM\s' "${CONTAINERFILE}")
+done < <(grep -iE '^FROM[[:space:]]' "${CONTAINERFILE}")
 
 if [ "${EXIT_CODE}" = "0" ]; then
   echo "All checks passed."
