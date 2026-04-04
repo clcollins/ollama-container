@@ -13,11 +13,11 @@ RUN dnf install --assumeyes \
 
 # Python-based tools
 RUN pip install --root-user-action=ignore \
-      yamllint \
-      ruff
+      yamllint==1.38.0 \
+      ruff==0.15.9
 
 # Node.js-based tools
-RUN npm install -g markdownlint-cli2
+RUN npm install -g markdownlint-cli2@0.22.0
 
 # checkmake (Makefile linter) — pre-built binary
 ARG CHECKMAKE_VERSION=0.2.2

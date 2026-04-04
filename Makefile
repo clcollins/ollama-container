@@ -72,7 +72,7 @@ yaml-lint:
 
 .PHONY: markdown-lint
 markdown-lint:
-	npx markdownlint-cli2 "**/*.md" "#node_modules"
+	markdownlint-cli2 "**/*.md" "#node_modules"
 
 .PHONY: makefile-lint
 makefile-lint:
@@ -81,6 +81,7 @@ makefile-lint:
 .PHONY: containerfile-check
 containerfile-check:
 	ENFORCE=1 bash test/scripts/check-containerfile-tags.sh Containerfile
+	ENFORCE=1 bash test/scripts/check-containerfile-tags.sh test/Containerfile.ci
 
 .PHONY: kubernetes-validate
 kubernetes-validate:
