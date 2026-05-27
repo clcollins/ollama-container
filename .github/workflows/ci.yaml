@@ -146,7 +146,7 @@ jobs:
             -t ollama:ci .
 
       - name: Verify ollama runs
-        run: podman run --rm ollama:ci ollama --help
+        run: podman run --rm ollama:ci --help
 
       - name: Validate OCI labels
         run: |

@@ -37,3 +37,6 @@ RUN ollama --help
 
 EXPOSE 11434
 
+ENTRYPOINT ["/bin/ollama"]
+CMD ["serve"]
+
